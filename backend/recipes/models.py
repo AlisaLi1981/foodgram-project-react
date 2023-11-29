@@ -1,4 +1,5 @@
 from colorfield.fields import ColorField
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 from users.models import User
@@ -16,7 +17,14 @@ class Tag(models.Model):
     )
     slug = models.SlugField(
         max_length=200,
-        unique=True
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[-a-zA-Z0-9_]+$',
+                message='Допустимы буквы, цифры, подчеркивания и дефисы.',
+                code='invalid_slug'
+            ),
+        ],
     )
 
     def __str__(self):
@@ -31,6 +39,11 @@ class Ingredient(models.Model):
         'Единица измерения', max_length=200
     )
 
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -39,7 +52,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recpies',
+        related_name='recipes',
         verbose_name='Автор рецепта',
     )
 
@@ -55,16 +68,25 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
 
     ingredients = models.ManyToManyField(
-        Ingredient, related_name='recpies',
+        Ingredient, related_name='recipes',
         verbose_name='Ингредиенты'
     )
 
     tags = models.ManyToManyField(
-        Ingredient, related_name='recpies',
+        Tag, related_name='recipes',
         verbose_name='Теги'
     )
 
-    cooking_time = models.PositiveSmallIntegerField()
+    cooking_time = models.PositiveSmallIntegerField(
+        'Время приготовления',
+        validators=[MinValueValidator(
+            1, message='Время приготовления должно быть не менее 1 минуты!')],
+    )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.name
@@ -99,8 +121,18 @@ class RecipeIngredient(models.Model):
     )
 
     amount = models.PositiveSmallIntegerField(
-        'Количество'
+        'Количество',
+        validators=[MinValueValidator(
+            1, message='Количество продукта должно быть не менее 1!')],
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_ingredient'
+            )
+        ]
 
     def __str__(self):
         return (

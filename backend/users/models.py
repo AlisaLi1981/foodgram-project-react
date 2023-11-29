@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models import F, Q
 
 
 class User(AbstractUser):
@@ -7,6 +9,7 @@ class User(AbstractUser):
         max_length=150,
         verbose_name='Имя пользователя',
         unique=True,
+        validators=[UnicodeUsernameValidator()],
     )
 
     email = models.EmailField(
@@ -24,6 +27,10 @@ class User(AbstractUser):
         max_length=150
     )
 
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
     def __str__(self):
         return self.username
 
@@ -35,6 +42,14 @@ class Subscriptions(models.Model):
 
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='is_subscribed')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='unique_subscription'),
+            models.CheckConstraint(check=~Q(user=F('author')),
+                                   name='no_autosubscribe')
+        ]
 
     def __str__(self):
         return f'{self.user} подписан на {self.author}'
