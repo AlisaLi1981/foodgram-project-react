@@ -1,3 +1,4 @@
+from django.db.models import Count
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
@@ -36,10 +37,26 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SubscriptionsSerializer(serializers.ModelSerializer):
+class SubscriptionsGetSerializer(serializers.ModelSerializer):
+    count = serializers.SerializerMethodField()
+
     class Meta:
         model = Subscriptions
         fields = '__all__'
+
+    def get_count(self, obj):
+        return Subscriptions.objects.filter(user=obj.user).count()
+
+
+class SubscriptionsPostSerializer(serializers.ModelSerializer):
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Subscriptions
+        fields = '__all__'
+
+    def get_recipes_count(self, obj):
+        return obj.author.recipes.count()
 
 
 class CustomUserSerializer(UserSerializer):
@@ -74,10 +91,3 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
             'password',
         )
-#        extra_kwargs = {
-#            'email': {'required': True},
-#            'username': {'required': True},
-#            'first_name': {'required': True},
-#            'last_name': {'required': True},
-#            'password': {'required': True},
-#        }

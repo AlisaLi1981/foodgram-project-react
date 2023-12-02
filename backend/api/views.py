@@ -8,8 +8,8 @@ from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from users.models import Subscriptions, User
 from .serializers import (
     FavoriteSerializer, IngredientSerializer, RecipeSerializer,
-    TagSerializer, ShoppingCartSerializer, SubscriptionsSerializer,
-    CustomUserSerializer
+    TagSerializer, ShoppingCartSerializer, SubscriptionsGetSerializer,
+    SubscriptionsPostSerializer, CustomUserSerializer
 )
 
 
@@ -47,7 +47,7 @@ class RecipeViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class UserViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
@@ -64,7 +64,7 @@ class UserViewSet(UserViewSet):
             subscription = Subscriptions.objects.create(
                 user=request.user, author=author)
             subscription.save()
-            serializer = SubscriptionsSerializer(subscription)
+            serializer = SubscriptionsPostSerializer(subscription)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
             recipe = self.get_object()
@@ -76,3 +76,10 @@ class UserViewSet(UserViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['get'])
+    def list_subscriptions(self, request):
+        user = self.get_object()
+        subscriptions = Subscriptions.objects.filter(user=user)
+        serializer = SubscriptionsGetSerializer(subscriptions, many=True)
+        return Response(serializer.data)
