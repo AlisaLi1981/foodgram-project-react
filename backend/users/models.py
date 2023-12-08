@@ -5,11 +5,13 @@ from django.db.models import F, Q
 
 
 class User(AbstractUser):
+    username_validator = UnicodeUsernameValidator()
+
     username = models.CharField(
         max_length=150,
         verbose_name='Имя пользователя',
         unique=True,
-        validators=[UnicodeUsernameValidator()],
+        validators=[username_validator],
     )
 
     email = models.EmailField(

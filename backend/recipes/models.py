@@ -69,6 +69,7 @@ class Recipe(models.Model):
 
     ingredients = models.ManyToManyField(
         Ingredient, related_name='recipes',
+        through='RecipeIngredient',
         verbose_name='Ингредиенты'
     )
 
@@ -92,22 +93,6 @@ class Recipe(models.Model):
         return self.name
 
 
-class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name='favorite',
-        on_delete=models.CASCADE
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        related_name='favorite',
-        on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return f'Рецепт {self.recipe.name} добавлен в Избранное'
-
-
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
@@ -117,7 +102,8 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         related_name='recipes_ingredients',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
     )
 
     amount = models.PositiveSmallIntegerField(
@@ -155,3 +141,19 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return (f'Рецепт {self.recipe.name} добавлен в список покупок')
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='favorite',
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='favorite',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return f'Рецепт {self.recipe.name} добавлен в Избранное'
