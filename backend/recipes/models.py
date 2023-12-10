@@ -7,17 +7,13 @@ from users.models import User
 
 class Tag(models.Model):
     name = models.CharField(
-        'Тег', max_length=200,
-        unique=True
+        'Тег', max_length=200, unique=True
     )
     color = ColorField(
-        'Цвет шрифта',
-        max_length=7,
-        unique=True
+        'Цвет шрифта', max_length=7, unique=True
     )
     slug = models.SlugField(
-        max_length=200,
-        unique=True,
+        max_length=200, unique=True,
         validators=[
             RegexValidator(
                 regex=r'^[-a-zA-Z0-9_]+$',
@@ -50,8 +46,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Автор рецепта',
     )
@@ -61,8 +56,7 @@ class Recipe(models.Model):
     )
 
     image = models.ImageField(
-        upload_to='recipes/images/',
-        default=None
+        upload_to='recipes/images/'
     )
 
     text = models.TextField('Описание')
@@ -129,13 +123,11 @@ class RecipeIngredient(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE,
         related_name='shopping_cart',
     )
     recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
+        Recipe, on_delete=models.CASCADE,
         related_name='shopping_cart',
     )
 
@@ -145,13 +137,11 @@ class ShoppingCart(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User,
-        related_name='favorite',
+        User, related_name='favorite',
         on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
-        Recipe,
-        related_name='favorite',
+        Recipe, related_name='favorite',
         on_delete=models.CASCADE
     )
 
