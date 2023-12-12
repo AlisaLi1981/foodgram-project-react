@@ -38,12 +38,19 @@ class User(AbstractUser):
 class Subscriptions(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='subscriber')
+        related_name='subscriber',
+        verbose_name='Подписчик'
+    )
 
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='is_subscribed')
+        User, on_delete=models.CASCADE,
+        related_name='is_subscribed',
+        verbose_name='Автор'
+    )
 
     class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(fields=['user', 'author'],
                                     name='unique_subscription'),
