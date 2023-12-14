@@ -1,11 +1,12 @@
 from collections import Counter
-from djoser.serializers import UserSerializer, UserCreateSerializer
+
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from recipes.models import (Favorite, Ingredient, RecipeIngredient,
-                            Recipe, ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from users.models import Subscriptions, User
 
 

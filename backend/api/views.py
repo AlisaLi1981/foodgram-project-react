@@ -1,25 +1,27 @@
+from io import BytesIO
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from io import BytesIO
 from reportlab.pdfgen import canvas
-from rest_framework import status, permissions
+from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from recipes.models import (Favorite, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from users.models import Subscriptions, User
-from .serializers import (
-    CustomUserSerializer, FavoriteSerializer, IngredientSerializer,
-    RecipeGetSerializer, RecipePostSerializer, ShoppingCartSerializer,
-    SubscriptionsGetSerializer, SubscriptionsPostSerializer, TagSerializer
-)
+
 from .filters import IngredientFilter, RecipeFilter
 from .paginators import CustomPagination
 from .permissions import AuthorOrReadOnly
+from .serializers import (CustomUserSerializer, FavoriteSerializer,
+                          IngredientSerializer, RecipeGetSerializer,
+                          RecipePostSerializer, ShoppingCartSerializer,
+                          SubscriptionsGetSerializer,
+                          SubscriptionsPostSerializer, TagSerializer)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -157,7 +159,8 @@ class RecipeViewSet(ModelViewSet):
         for ingredient_name, details in ingredients_dict.items():
             quantity = details['quantity']
             unit = details['unit']
-            pdf.drawString(100, 700, f"{ingredient_name} ({unit}) — {quantity}")
+            pdf.drawString(
+                100, 700, f'{ingredient_name} ({unit}) — {quantity}')
 
         pdf.showPage()
         pdf.save()
