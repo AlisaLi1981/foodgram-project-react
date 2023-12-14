@@ -6,12 +6,13 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-f*f8!x87bcx7@yj0@^a#r13s%^hxnath@!c!(w(a@=q%yu#n5#'
+SECRET_KEY = os.getenv('SECRET_KEY', ('django-insecure-f*f8!x87bcx7@yj0@^'
+                                      'a#r13s%^hxnath@!c!(w(a@=q%yu#n5#'))
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['51.250.28.229', '127.0.0.1', 'localhost', 'my-foodgram.ddns.net']
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', ('51.250.28.229 127.0.0.1 localhost'
+                                            'my-foodgram.ddns.net')).split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -61,14 +62,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-##        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -110,7 +103,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR / 'collected_static')
+STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = '/media/'
 
