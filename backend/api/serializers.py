@@ -251,7 +251,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         if cooking_time < 1:
             raise serializers.ValidationError(
                 'Время приготовления должно быть не меньше 1 мин.!'
-            )
+                )
         return cooking_time
 
     def validate_image(self, image):
