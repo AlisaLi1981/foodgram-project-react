@@ -16,7 +16,7 @@ services:
     image: alisali1981/foodgram_backend
     env_file: .env
     volumes:
-      - static_volume:/backend_static/
+      - static:/backend_static/
       - media:/app/media/
     depends_on:
       - db
@@ -34,8 +34,8 @@ services:
     ports:
       - 8090:80
     volumes:
-      - static_volume:/staticfiles/
-      - media:/app/media/
+      - static:/staticfiles/
+      - media:/media/
     depends_on:
       - backend
       - frontend
