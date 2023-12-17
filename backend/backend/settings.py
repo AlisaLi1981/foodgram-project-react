@@ -10,7 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', ('django-insecure-f*f8!x87bcx7@yj0@^'
                                       'a#r13s%^hxnath@!c!(w(a@=q%yu#n5#'))
 
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+# DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
+DEBUG = True
 
 # ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', ('51.250.28.229 127.0.0.1 localhost'
 #                                            'my-foodgram.ddns.net')).split(' ')
