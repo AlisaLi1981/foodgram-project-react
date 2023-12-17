@@ -35,7 +35,7 @@ services:
       - 8090:80
     volumes:
       - static_volume:/staticfiles/
-      - media:/app/media/
+      - media:/media/
     depends_on:
       - backend
       - frontend
