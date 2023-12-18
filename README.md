@@ -1,2 +1,102 @@
-# praktikum_new_diplom  
-bla bla
+# Проект Foodgram
+
+![example workflow](https://github.com/AlisaLi1981/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+
+## Описание 
+
+Сайт адептов кулинарного искусства и просто любителей вкусно готовить. Здесь можно найти рецепты различных блюд и поделиться своими.
+
+## Стек технологий
+- Python
+- Django
+- Djangorestframework
+- Djoser
+- Docker
+- Nginx
+- Gunicorn
+- PostgreSQL
+
+##  Cсылка на развернутый проект:
+- https://my-foodgram.ddns.net/recipes
+
+## Запуск проекта
+
+Клонировать репозиторий:
+
+```
+git clone <адрес репозитория>
+```
+
+Создайть на сервере директорию для проекта, перейти в нее:
+
+```
+mkdir <имя директрии>
+cd <имя директрии>
+```
+
+Запустить проект на сервере с помощью docker-compose:
+
+```
+docker compose -f docker-compose.yml up --build -d
+```
+
+Выполнить миграции:
+
+```
+docker compose -f docker-compose.yml exec backend python manage.py migrate
+```
+
+Собрать статику:
+
+```
+docker compose -f docker-compose.yml exec backend python manage.py collectstatic
+docker compose -f docker-compose.yml exec backend cp -r /app/static_backend/. /backend_static/static/
+```
+
+Загрузить базу данных ингредиентов:
+
+```
+docker compose -f docker-compose.yml exec backend python manage.py import_csv
+```
+
+## .env
+
+В корне проекта создать файл .env и прописать в него свои данные.
+
+Пример:
+
+```
+POSTGRES_DB=kittygram
+POSTGRES_USER=kittygram_user
+POSTGRES_PASSWORD=kittygram_password
+DB_NAME=kittygram
+```
+
+## Workflow
+
+Для использования CI и CD: в GitHub Actions `Settings/Secrets/Actions` прописать переменные (Secrets) для доступа к сервисам:
+
+```
+DOCKER_USERNAME                # логин в DockerHub
+DOCKER_PASSWORD                # пароль DockerHub
+HOST                           # ip_address сервера
+USER                           # имя пользователя
+SSH_KEY                        # приватный ssh-ключ
+SSH_PASSPHRASE                 # пароль для ssh-ключа
+
+PROJECT_FOLDER                 # имя папки с проектом на сервере
+
+```
+
+При push в ветку main отрабатывают следующие сценарии:
+
+- проверка кода на соответствие PEP8, если push был в ветку main, выполняются следующие шаги;
+- сборка и доставка докер-образов в репозиторий на DockerHub
+- автоматический деплой проекта на сервер.
+
+### Важно:
+Файл docker-compose.yml используется для первичного запуска и в процессе отладки (сборка образов происходит каждый раз). Для запусков на боевом сервере рекомендуется использовать файл docker-compose.production.yml (будут использоваться собранные образы из Docker Hub).
+
+## Автор
+
+Дарья Леонова [GitHub](https://github.com/AlisaLi1981)
