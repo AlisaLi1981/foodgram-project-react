@@ -145,31 +145,22 @@ class RecipeViewSet(ModelViewSet):
                 ingredient_unit = recipe_ingredient.ingredient.measurement_unit
 
                 if ingredient_name in ingredients_dict:
-                    ingredients_dict[
-                        ingredient_name]['quantity'] += ingredient_quantity
+                    ingredients_dict[ingredient_name]['quantity'] += ingredient_quantity
                 else:
                     ingredients_dict[ingredient_name] = {
                         'quantity': ingredient_quantity,
                         'unit': ingredient_unit
                     }
 
-        buffer = BytesIO()
-        pdf = canvas.Canvas(buffer)
-        pdf.setTitle('Shopping List')
+        file_content = ''
         for ingredient_name, details in ingredients_dict.items():
             quantity = details['quantity']
             unit = details['unit']
-            pdf.drawString(
-                100, 700, f'{ingredient_name} ({unit}) — {quantity}')
+            file_content += f'{ingredient_name} ({unit}) - {quantity}\n'
 
-        pdf.showPage()
-        pdf.save()
-        buffer.seek(0)
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = (
-            'attachment; filename="shopping_list.pdf"'
-        )
-        response.write(buffer.read())
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
+        response.write(file_content)
 
         return response
 
