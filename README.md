@@ -83,6 +83,7 @@ DB_NAME=kittygram
 ```
 DOCKER_USERNAME                # логин в DockerHub
 DOCKER_PASSWORD                # пароль DockerHub
+
 HOST                           # ip_address сервера
 USER                           # имя пользователя
 SSH_KEY                        # приватный ssh-ключ
