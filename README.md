@@ -17,7 +17,7 @@
 - PostgreSQL
 
 ##  Cсылка на развернутый проект:
-- https://my-foodgram.ddns.net/recipes
+- https://my-foodgram.ddns.net/
 
 ## Данные доступа для администратора:
 login: admin@admin.com
