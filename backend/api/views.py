@@ -1,10 +1,10 @@
-from io import BytesIO
+# from io import BytesIO
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from reportlab.pdfgen import canvas
+# from reportlab.pdfgen import canvas
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -145,7 +145,8 @@ class RecipeViewSet(ModelViewSet):
                 ingredient_unit = recipe_ingredient.ingredient.measurement_unit
 
                 if ingredient_name in ingredients_dict:
-                    ingredients_dict[ingredient_name]['quantity'] += ingredient_quantity
+                    ingredients_dict[
+                        ingredient_name]['quantity'] += ingredient_quantity
                 else:
                     ingredients_dict[ingredient_name] = {
                         'quantity': ingredient_quantity,
@@ -159,7 +160,8 @@ class RecipeViewSet(ModelViewSet):
             file_content += f'{ingredient_name} ({unit}) - {quantity}\n'
 
         response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
+        response[
+            'Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
         response.write(file_content)
 
         return response
