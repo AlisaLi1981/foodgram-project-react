@@ -1,4 +1,5 @@
 # from io import BytesIO
+from io import StringIO
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -135,6 +136,7 @@ class RecipeViewSet(ModelViewSet):
         user = request.user
         cart_items = ShoppingCart.objects.filter(user=user)
         ingredients_dict = {}
+
         for cart_item in cart_items:
             recipe_ingredients = RecipeIngredient.objects.filter(
                 recipe=cart_item.recipe
@@ -153,16 +155,19 @@ class RecipeViewSet(ModelViewSet):
                         'unit': ingredient_unit
                     }
 
-        file_content = ''
+        shopping_list_text = StringIO()
+
         for ingredient_name, details in ingredients_dict.items():
             quantity = details['quantity']
             unit = details['unit']
-            file_content += f'{ingredient_name} ({unit}) - {quantity}\n'
+            shopping_list_text.write(
+                f'{ingredient_name} ({unit}) — {quantity}\n'
+            )
 
         response = HttpResponse(content_type='text/plain')
         response[
             'Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
-        response.write(file_content)
+        response.write(shopping_list_text.getvalue())
 
         return response
 
