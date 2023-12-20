@@ -95,8 +95,10 @@ class Recipe(models.Model):
         'Время приготовления',
         validators=[MinValueValidator(
             LimitValueConstants.MIN_COOKING_TIME.value,
-            message=(f'Время приготовления должно быть не менее'
-                     f'{LimitValueConstants.MIN_COOKING_TIME.value} минуты!'))],
+            message=(
+                f'Время приготовления должно быть не менее'
+                f'{LimitValueConstants.MIN_COOKING_TIME.value} минуты!'
+            ))],
     )
 
     class Meta:
