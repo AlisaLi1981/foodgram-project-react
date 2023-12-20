@@ -3,29 +3,34 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.db.models import F, Q
 
+from .constants import FieldsConstants, UserConstants
+
 
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
-        max_length=150,
+        max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value,
         verbose_name='Имя пользователя',
         unique=True,
         validators=[username_validator],
     )
 
     email = models.EmailField(
-        max_length=254,
+        max_length=FieldsConstants.EMAIL_MAX_LENGTH.value,
         verbose_name='Почта',
         unique=True
     )
 
     first_name = models.CharField(
-        'Имя', max_length=150
+        'Имя', max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value
     )
     last_name = models.CharField(
-        'Фамилия', max_length=150
+        'Фамилия', max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value
     )
+
+    USERNAME_FIELD = UserConstants.USERNAME_FIELD_VALUE.value
+    REQUIRED_FIELDS = UserConstants.REQUIRED_FIELDS_VALUE.value
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -44,7 +49,7 @@ class Subscriptions(models.Model):
 
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='is_subscribed',
+        related_name='following',
         verbose_name='Автор'
     )
 

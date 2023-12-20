@@ -7,6 +7,7 @@ from rest_framework.fields import SerializerMethodField
 
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
+from users.constants import LimitValueConstants
 from users.models import Subscriptions, User
 
 
@@ -56,10 +57,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
                     'Рецепт уже добавлен в избранное.'
                 )
             return data
-        if self.context['request'].method == 'DELETE':
-            if Favorite.objects.filter(user=user, recipe=recipe).exists():
-                return data
-            raise serializers.ValidationError('Этого рецепта нет в избранном!')
 
     def to_representation(self, instance):
         context = {'request': self.context.get('request')}
@@ -82,12 +79,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                     'Рецепт уже добавлен в список покупок.'
                 )
             return data
-        if self.context['request'].method == 'DELETE':
-            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-                return data
-            raise serializers.ValidationError(
-                'Этого рецепта нет в списке покупок!'
-            )
 
     def to_representation(self, instance):
         context = {'request': self.context.get('request')}
@@ -135,15 +126,6 @@ class SubscriptionsPostSerializer(serializers.ModelSerializer):
                     'Вы уже подписаны на этого автора!'
                 )
             return data
-        if self.context['request'].method == 'DELETE':
-            if Subscriptions.objects.filter(
-                    user=data['user'],
-                    author=data['author']
-            ).exists():
-                return data
-            raise serializers.ValidationError(
-                'Вы не подписаны на этого автора!'
-            )
 
     def to_representation(self, instance):
         return SubscriptionsGetSerializer(instance['author'], context={
@@ -229,7 +211,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientPostSerializer(
         many=True, source='recipes_ingredients'
     )
-    cooking_time = serializers.IntegerField()
+    cooking_time = serializers.IntegerField(
+        min_value=LimitValueConstants.MIN_COOKING_TIME.value,
+        max_value=LimitValueConstants.MAX_COOKING_TIME.value
+    )
 
     class Meta:
         model = Recipe
@@ -248,9 +233,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return value
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time < 1:
+        if cooking_time < LimitValueConstants.MIN_COOKING_TIME.value:
             raise serializers.ValidationError(
-                'Время приготовления должно быть не меньше 1 мин.!'
+                f'Время приготовления должно быть не меньше'
+                f'{LimitValueConstants.MIN_COOKING_TIME.value} мин.!'
             )
         return cooking_time
 
@@ -265,20 +251,22 @@ class RecipePostSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         ingredients = validated_data.pop('recipes_ingredients')
         tags = validated_data.pop('tags')
+
         if not ingredients:
             raise serializers.ValidationError('Ингредиенты обязательны!')
-        ingredient_ids = [ingredient['id'] for ingredient in ingredients]
+
+        ingredient_ids = set(ingredient['id'] for ingredient in ingredients)
         existing_ingredients = Ingredient.objects.filter(
             id__in=ingredient_ids).values_list('id', flat=True)
-        if set(ingredient_ids) != set(existing_ingredients):
+
+        if len(ingredient_ids) != len(existing_ingredients):
             raise serializers.ValidationError(
-                'Указан несуществующий ингредиент!'
-            )
-        ingredient_counts = Counter(ingredient_ids)
-        if any(count > 1 for count in ingredient_counts.values()):
+                'Указан несуществующий ингредиент!')
+
+        if len(ingredient_ids) != len(ingredients):
             raise serializers.ValidationError(
-                'Указан повторяющийся ингредиент!'
-            )
+                'Указан повторяющийся ингредиент!')
+
         recipe = request.user.recipes.create(**validated_data)
         recipe.tags.set(tags)
         self._create_ingredients(recipe, ingredients)

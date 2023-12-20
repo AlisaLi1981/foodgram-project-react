@@ -13,14 +13,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         file_path = os.path.join(settings.BASE_DIR, 'data', 'ingredients.csv')
 
+        ingredients_to_create = []
+
         with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
             for row in reader:
                 name, measurement_unit = row
                 ingredient, created = Ingredient.objects.get_or_create(
-                    name=name,
-                    measurement_unit=measurement_unit
+                    name=name, measurement_unit=measurement_unit
                 )
                 if created:
-                    self.stdout.write(self.style.SUCCESS(
-                        f'Добавлен ингредиент: {ingredient}'))
+                    ingredients_to_create.append(ingredient)
+
+        Ingredient.objects.bulk_create(ingredients_to_create)
+
+        self.stdout.write(
+            self.style.SUCCESS('Ингредиенты успешно добавлены в БД'))
