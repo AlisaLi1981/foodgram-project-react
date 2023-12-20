@@ -2,9 +2,8 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from users.models import User
-
 from users.constants import FieldsConstants, LimitValueConstants
+from users.models import User
 
 
 class Tag(models.Model):
