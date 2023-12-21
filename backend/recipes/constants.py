@@ -18,4 +18,3 @@ class IngredientConstants(Enum):
     INGREDIENT_NAME_MAX_LENGTH = 200
     MEASUREMENT_UNIT_MAX_LENGTH = 200
     MIN_AMOUNT = 1
-

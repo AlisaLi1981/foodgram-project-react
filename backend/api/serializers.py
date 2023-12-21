@@ -8,7 +8,6 @@ from rest_framework.fields import SerializerMethodField
 from recipes.constants import RecipesConstants
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
-
 from users.models import Subscriptions, User
 
 
