@@ -20,8 +20,8 @@
 - https://my-foodgram.ddns.net/
 
 ## Данные доступа для администратора:
-login: 
-pasword: 
+login: admin@admin.ru
+pasword: 789
 
 ## Запуск проекта
 
