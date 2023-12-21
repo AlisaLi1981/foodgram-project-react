@@ -1,0 +1,12 @@
+from enum import Enum
+
+
+class RecipesConstants(Enum):
+    NAME_MAX_LENGTH = 200
+    SLUG_MAX_LENGTH = 200
+    MEASUREMENT_UNIT_MAX_LENGTH = 200
+    COLOR_MAX_LENGTH = 7
+    MIN_COOKING_TIME = 1
+    MAX_COOKING_TIME = 32767
+    MIN_AMOUNT = 1
+    PAGE_SIZE = 6

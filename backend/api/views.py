@@ -57,15 +57,15 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['post'])
     def favorite(self, request, pk=None):
         user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipe = get_object_or_404(Recipe, id=pk)
         serializer = FavoriteSerializer(
             data={'user': user.id, 'recipe': recipe.id},
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        Favorite.objects.create(user=user, recipe=recipe)
+        serializer.save()
         return Response(
-            data=serializer.data,
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
@@ -81,15 +81,15 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['post'])
     def shopping_cart(self, request, pk=None):
         user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipe = get_object_or_404(Recipe, id=pk)
         serializer = ShoppingCartSerializer(
             data={'user': user.id, 'recipe': recipe.id},
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        ShoppingCart.objects.create(user=user, recipe=recipe)
+        serializer.save()
         return Response(
-            data=serializer.data,
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 

@@ -2,22 +2,22 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from users.constants import FieldsConstants, LimitValueConstants
+from .constants import RecipesConstants
 from users.models import User
 
 
 class Tag(models.Model):
     name = models.CharField(
-        'Тег', max_length=FieldsConstants.NAME_MAX_LENGTH.value,
+        'Тег', max_length=RecipesConstants.NAME_MAX_LENGTH.value,
         unique=True
     )
     color = ColorField(
         'Цвет шрифта',
-        max_length=FieldsConstants.COLOR_MAX_LENGTH.value,
+        max_length=RecipesConstants.COLOR_MAX_LENGTH.value,
         unique=True
     )
     slug = models.SlugField(
-        max_length=FieldsConstants.SLUG_MAX_LENGTH.value,
+        max_length=RecipesConstants.SLUG_MAX_LENGTH.value,
         unique=True,
         validators=[
             RegexValidator(
@@ -39,11 +39,11 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         'Наименование',
-        max_length=FieldsConstants.NAME_MAX_LENGTH.value
+        max_length=RecipesConstants.NAME_MAX_LENGTH.value
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=FieldsConstants.MEASUREMENT_UNIT_MAX_LENGTH.value
+        max_length=RecipesConstants.MEASUREMENT_UNIT_MAX_LENGTH.value
     )
 
     class Meta:
@@ -70,7 +70,7 @@ class Recipe(models.Model):
 
     name = models.CharField(
         'Название рецепта',
-        max_length=FieldsConstants.NAME_MAX_LENGTH.value
+        max_length=RecipesConstants.NAME_MAX_LENGTH.value
     )
 
     image = models.ImageField(
@@ -93,10 +93,10 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=[MinValueValidator(
-            LimitValueConstants.MIN_COOKING_TIME.value,
+            RecipesConstants.MIN_COOKING_TIME.value,
             message=(
                 f'Время приготовления должно быть не менее'
-                f'{LimitValueConstants.MIN_COOKING_TIME.value} минуты!'
+                f'{RecipesConstants.MIN_COOKING_TIME.value} минуты!'
             ))],
     )
 
@@ -125,9 +125,9 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveSmallIntegerField(
         'Количество',
         validators=[MinValueValidator(
-            LimitValueConstants.MIN_AMOUNT.value,
+            RecipesConstants.MIN_AMOUNT.value,
             message=(f'Количество продукта должно быть не менее'
-                     f'{LimitValueConstants.MIN_AMOUNT.value}!'))],
+                     f'{RecipesConstants.MIN_AMOUNT.value}!'))],
     )
 
     class Meta:

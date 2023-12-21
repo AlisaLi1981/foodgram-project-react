@@ -3,30 +3,30 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.db.models import F, Q
 
-from .constants import FieldsConstants, UserConstants
+from .constants import UserConstants
 
 
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
-        max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value,
+        max_length=UserConstants.PERSONAL_DATA_MAX_LENGTH.value,
         verbose_name='Имя пользователя',
         unique=True,
         validators=[username_validator],
     )
 
     email = models.EmailField(
-        max_length=FieldsConstants.EMAIL_MAX_LENGTH.value,
+        max_length=UserConstants.EMAIL_MAX_LENGTH.value,
         verbose_name='Почта',
         unique=True
     )
 
     first_name = models.CharField(
-        'Имя', max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value
+        'Имя', max_length=UserConstants.PERSONAL_DATA_MAX_LENGTH.value
     )
     last_name = models.CharField(
-        'Фамилия', max_length=FieldsConstants.PERSONAL_DATA_MAX_LENGTH.value
+        'Фамилия', max_length=UserConstants.PERSONAL_DATA_MAX_LENGTH.value
     )
 
     USERNAME_FIELD = UserConstants.USERNAME_FIELD_VALUE.value

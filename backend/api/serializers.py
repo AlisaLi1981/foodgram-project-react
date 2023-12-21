@@ -7,7 +7,7 @@ from rest_framework.fields import SerializerMethodField
 
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
-from users.constants import LimitValueConstants
+from recipes.constants import RecipesConstants
 from users.models import Subscriptions, User
 
 
@@ -46,44 +46,42 @@ class TagSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
-        fields = '__all__'
+        fields = ('user', 'recipe')
 
     def validate(self, data):
         user = data['user']
         recipe = data['recipe']
-        if self.context['request'].method == 'POST':
-            if Favorite.objects.filter(user=user, recipe=recipe).exists():
-                raise serializers.ValidationError(
-                    'Рецепт уже добавлен в избранное.'
-                )
-            return data
+        if user.favorite.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                'Рецепт уже добавлен в избранное.'
+            )
+        return data
 
     def to_representation(self, instance):
         context = {'request': self.context.get('request')}
         return ShortRecipeSerializer(
-            instance['recipe'], context=context
+            instance.recipe, context=context
         ).data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
-        fields = '__all__'
+        fields = ('user', 'recipe')
 
     def validate(self, data):
         user = data['user']
         recipe = data['recipe']
-        if self.context['request'].method == 'POST':
-            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-                raise serializers.ValidationError(
-                    'Рецепт уже добавлен в список покупок.'
-                )
-            return data
+        if user.shopping_cart.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                'Рецепт уже добавлен в список покупок.'
+            )
+        return data
 
     def to_representation(self, instance):
         context = {'request': self.context.get('request')}
         return ShortRecipeSerializer(
-            instance['recipe'], context=context
+            instance.recipe, context=context
         ).data
 
 
@@ -212,8 +210,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
         many=True, source='recipes_ingredients'
     )
     cooking_time = serializers.IntegerField(
-        min_value=LimitValueConstants.MIN_COOKING_TIME.value,
-        max_value=LimitValueConstants.MAX_COOKING_TIME.value
+        min_value=RecipesConstants.MIN_COOKING_TIME.value,
+        max_value=RecipesConstants.MAX_COOKING_TIME.value
     )
 
     class Meta:
@@ -233,10 +231,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return value
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time < LimitValueConstants.MIN_COOKING_TIME.value:
+        if cooking_time < RecipesConstants.MIN_COOKING_TIME.value:
             raise serializers.ValidationError(
                 f'Время приготовления должно быть не меньше'
-                f'{LimitValueConstants.MIN_COOKING_TIME.value} мин.!'
+                f'{RecipesConstants.MIN_COOKING_TIME.value} мин.!'
             )
         return cooking_time
 
