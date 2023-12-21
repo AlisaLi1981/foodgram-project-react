@@ -4,7 +4,7 @@ from django.db import models
 
 from users.models import User
 
-from .constants import RecipesConstants, TagsConstants, IngredientConstants
+from .constants import IngredientConstants, RecipesConstants, TagsConstants
 
 
 class Tag(models.Model):
