@@ -2,8 +2,8 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from .constants import RecipesConstants
 from users.models import User
+from .constants import RecipesConstants
 
 
 class Tag(models.Model):

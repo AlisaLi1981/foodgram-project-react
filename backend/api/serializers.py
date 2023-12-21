@@ -5,9 +5,9 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
+from recipes.constants import RecipesConstants
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
-from recipes.constants import RecipesConstants
 from users.models import Subscriptions, User
 
 
