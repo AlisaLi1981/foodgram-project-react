@@ -196,7 +196,7 @@ class SubscriptionsGetSerializer(CustomUserSerializer):
     def get_recipes(self, obj):
         subscriptions = Subscriptions.objects.filter(user=obj)
         authors = [subscription.author for subscription in subscriptions]
-        recipes = Recipe.objects.filter(author__in=authors)
+        recipes = Recipe.objects.filter(author__in=authors).exclude(author=obj)
         return ShortRecipeSerializer(recipes, many=True).data
 
 
