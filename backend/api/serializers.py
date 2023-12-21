@@ -194,10 +194,13 @@ class SubscriptionsGetSerializer(CustomUserSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
-        subscriptions = Subscriptions.objects.filter(user=obj)
-        authors = [subscription.author for subscription in subscriptions]
-        recipes = Recipe.objects.filter(author__in=authors).exclude(author=obj)
-        return ShortRecipeSerializer(recipes, many=True).data
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if limit:
+            recipes = recipes[: int(limit)]
+        serializer = ShortRecipeSerializer(recipes, many=True, read_only=True)
+        return serializer.data
 
 
 class RecipePostSerializer(serializers.ModelSerializer):

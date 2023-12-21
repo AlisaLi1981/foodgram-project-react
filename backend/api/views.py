@@ -179,14 +179,10 @@ class CustomUserViewSet(UserViewSet):
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], pagination_class=CustomPagination)
     def subscriptions(self, request):
-        user = self.request.user
-        authors = User.objects.filter(following__user=user)
-        paginator = CustomPagination()
-        paginator.page_size = request.query_params.get('recipes_limit', 10)
-        result_page = paginator.paginate_queryset(authors, request)
+        queryset = User.objects.filter(following__user=request.user)
+        pages = self.paginate_queryset(queryset)
         serializer = SubscriptionsGetSerializer(
-            result_page, many=True, context={'request': request}
-        )
-        return paginator.get_paginated_response(serializer.data)
+            pages, many=True, context={'request': request})
+        return self.get_paginated_response(serializer.data)
