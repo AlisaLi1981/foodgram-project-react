@@ -29,8 +29,8 @@ class User(AbstractUser):
         'Фамилия', max_length=UserConstants.PERSONAL_DATA_MAX_LENGTH.value
     )
 
-    USERNAME_FIELD = UserConstants.USERNAME_FIELD_VALUE.value
-    REQUIRED_FIELDS = UserConstants.REQUIRED_FIELDS_VALUE.value
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     class Meta:
         verbose_name = 'Пользователь'

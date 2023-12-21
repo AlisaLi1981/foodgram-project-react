@@ -4,21 +4,21 @@ from django.db import models
 
 from users.models import User
 
-from .constants import RecipesConstants
+from .constants import RecipesConstants, TagsConstants, IngredientConstants
 
 
 class Tag(models.Model):
     name = models.CharField(
-        'Тег', max_length=RecipesConstants.NAME_MAX_LENGTH.value,
+        'Тег', max_length=TagsConstants.TAG_NAME_MAX_LENGTH.value,
         unique=True
     )
     color = ColorField(
         'Цвет шрифта',
-        max_length=RecipesConstants.COLOR_MAX_LENGTH.value,
+        max_length=TagsConstants.COLOR_MAX_LENGTH.value,
         unique=True
     )
     slug = models.SlugField(
-        max_length=RecipesConstants.SLUG_MAX_LENGTH.value,
+        max_length=TagsConstants.SLUG_MAX_LENGTH.value,
         unique=True,
         validators=[
             RegexValidator(
@@ -40,11 +40,11 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         'Наименование',
-        max_length=RecipesConstants.NAME_MAX_LENGTH.value
+        max_length=IngredientConstants.INGREDIENT_NAME_MAX_LENGTH.value
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=RecipesConstants.MEASUREMENT_UNIT_MAX_LENGTH.value
+        max_length=IngredientConstants.MEASUREMENT_UNIT_MAX_LENGTH.value
     )
 
     class Meta:
@@ -71,7 +71,7 @@ class Recipe(models.Model):
 
     name = models.CharField(
         'Название рецепта',
-        max_length=RecipesConstants.NAME_MAX_LENGTH.value
+        max_length=RecipesConstants.RECIPE_NAME_MAX_LENGTH.value
     )
 
     image = models.ImageField(
@@ -126,9 +126,9 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveSmallIntegerField(
         'Количество',
         validators=[MinValueValidator(
-            RecipesConstants.MIN_AMOUNT.value,
+            IngredientConstants.MIN_AMOUNT.value,
             message=(f'Количество продукта должно быть не менее'
-                     f'{RecipesConstants.MIN_AMOUNT.value}!'))],
+                     f'{IngredientConstants.MIN_AMOUNT.value}!'))],
     )
 
     class Meta:
